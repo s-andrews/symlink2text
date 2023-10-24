@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+import argparse
+from pathlib import Path
+
+VERSION = "0.1"
+
+def main():
+    global options
+    options = get_options()
+
+
+def get_options():
+    parser = argparse.ArgumentParser(description="Convert symlinks to a text file saying where the symlink pointed")
+
+    parser.add_argument("--quiet", action="store_true", default=False, help="Suppress all progress messages")
+    parser.add_argument("--dryrun",action="store_true", default=False, help="Report on actions but don't do anything")
+    parser.add_argument("--version", action="version", version=f"symlink2text v{VERSION} https://github.com/s-andrews/symlink2text")
+    parser.add_argument("startdir", type=str, help="The location to search for symlinks")
+
+    options = parser.parse_args()
+
+    return options
+
+if __name__ == "__main__":
+    main()
+
