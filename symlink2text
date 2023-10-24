@@ -2,6 +2,7 @@
 import argparse
 from pathlib import Path
 import sys
+import shutil
 
 VERSION = "0.1"
 
@@ -12,11 +13,22 @@ def main():
 
 
 def process_path(start_location):
+
+    # We need to be *super* careful about this.  As of Oct 2023 the behaviour of
+    # rglob is to *not* follow symlinked directories, which means that this code
+    # can't escape out of the start_location root.  There is a bug request to 
+    # change this behaviour though at https://github.com/python/cpython/issues/77609
+    # which would add a "follow_symlinks" option to enable this behaviour.  You would
+    # hope that if they implement this that it would default to False, but if it 
+    # didn't then this code could escape into the main filesystem and cause havoc.
+
     for file in Path(start_location).rglob("*"):
         if not file.is_symlink():
             continue
 
         target = file.readlink()
+        owner = file.owner()
+        group = file.group()
 
         if options.dryrun:
             print(f"Found {str(file)} which pointed to {target}")
@@ -30,6 +42,8 @@ def process_path(start_location):
                 print("#symlink2text", file=out)
                 print("#https://github.com/s-andrews/symlink2text", file=out)
                 print(f"TARGET\t{target}", file=out)
+
+            shutil.chown(file, user=owner, group=group)
 
             if not options.quiet:
                 print(f"Replaced {file}", file=sys.stderr)
