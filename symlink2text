@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 import sys
 import shutil
+import os
 
 VERSION = "0.1"
 
@@ -27,11 +28,16 @@ def process_path(start_location):
             continue
 
         target = file.readlink()
-        owner = file.owner()
-        group = file.group()
+
+        # We need to use lstat here so that we get the ownership details of the link
+        # and not of the target of the link.  Pathlib doesn't have an equivalent to
+        # this in its API unfortunately.
+
+        owner = os.lstat(file).st_uid
+        group = os.lstat(file).st_gid
 
         if options.dryrun:
-            print(f"Found {str(file)} which pointed to {target}")
+            print(f"Found {str(file)} which pointed to {target} with owner {owner} and group {group}")
 
         else:
             # We must delete the original symlink first otherwise the
