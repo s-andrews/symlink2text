@@ -9,11 +9,12 @@ VERSION = "0.1"
 
 def main():
 
+    global options
+    options = get_options()
+
     if os.geteuid() != 0:
         print("WARNING: This script should be run with root level permissions. You may not be able to replace some symlinks", file=sys.stderr)
 
-    global options
-    options = get_options()
     process_path(options.startdir)
 
 
