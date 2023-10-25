@@ -16,6 +16,12 @@ This is by design - it replaces symlinks with text files, so although the inform
 
 I would strongly recommend running the script with the ```--dryrun``` option initially to check what it's going to do, before actually allowing it to make changes to your system.
 
+## Installation
+You can install the program by simply downloading and uncompressing the release file from github.  You can then run the program from the directory it creates, or you can add it to your ```PATH```.
+
+The program is a python3 script which requires python >= v3.9.  It doesn't use any packages outside of the python standard library.
+
+
 ## Usage
 
 ```
